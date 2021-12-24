@@ -23,12 +23,12 @@ class CodeProvider with ChangeNotifier {
     var response = await http.get(url);
 
     if (response.statusCode == 200) {
-      print(response.body);
+      debugPrint(response.body);
 
       var decode = jsonDecode(response.body);
       codeInfo.add(Code(decode['code'], decode['points']));
     } else {
-      print(response.statusCode);
+      debugPrint(response.statusCode.toString());
     }
   }
 
