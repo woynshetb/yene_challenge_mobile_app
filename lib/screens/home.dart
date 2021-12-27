@@ -41,9 +41,6 @@ class _HomePageState extends State<HomePage> {
 
   var info = FirebaseFirestore.instance.collection("app-setting");
 
-  // .doc("kxQ1QnyR1ztbJG7fupS0")
-  // .get();
-
   getinfo() async {
     var info = FirebaseFirestore.instance
         .collection("app-setting")
@@ -56,11 +53,6 @@ class _HomePageState extends State<HomePage> {
         ctaLabel = queryDocumentSnapshot.get("ctaLabel");
         incrementingPoint = int.parse(queryDocumentSnapshot.get("point"));
       });
-      dynamic nested = queryDocumentSnapshot.get("bgUrl");
-      var information = queryDocumentSnapshot.data();
-
-      print("pointxdbjbd");
-      print(incrementingPoint);
     });
   }
 
@@ -77,12 +69,16 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+      backgroundColor: Color(0xff757575),
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           image: DecorationImage(
-              image: NetworkImage("${imageUrl}"), fit: BoxFit.cover),
+              image: imageUrl == null
+                  ? NetworkImage("url")
+                  : NetworkImage("${imageUrl}"),
+              fit: BoxFit.cover),
         ),
         child: SingleChildScrollView(
           child: Column(
