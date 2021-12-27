@@ -42,6 +42,7 @@ class _QRScanPageState extends State<QRScanPage> {
                 ),
               ),
               SizedBox(height: 8),
+
               Text(
                 ' You have got  $qrCode points',
                 // ignore: prefer_const_constructors
