@@ -29,8 +29,8 @@ class CodeProvider with ChangeNotifier {
   Code? info;
 
   Future checkAndUpdateCode(String code) async {
-    var url = Uri.parse("https://yeneproject.herokuapp.com/update");
-    var response = await http.put(url, body: {"code": code});
+    var url = Uri.parse("https://yeneproject.herokuapp.com/checkcode");
+    var response = await http.post(url, body: {"code": code});
 
     if (response.statusCode == 200) {
       await getUpdatedFile(code);
