@@ -1,9 +1,13 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unused_import
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yene_test_mobile/providers/code_provider.dart';
-import 'package:yene_test_mobile/screens/testing.dart';
+import 'package:yene_test_mobile/screens/qr_code_scanner.dart';
+import 'package:yene_test_mobile/screens/qr_generator.dart';
+
+import 'package:qr_flutter/qr_flutter.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,18 +17,53 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  TextEditingController code = TextEditingController();
+  int i = 0;
+  int x = 0;
+  Color? color;
+  String? imageUrl;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getdata();
+  }
+
+  final referenceData = FirebaseDatabase.instance
+      .ref("app-setting/kxQ1QnyR1ztbJG7fupS0")
+      .child("bgUrl");
+  getdata() async {
+    DatabaseEvent event = await referenceData.once();
+    // got this value
+    print(event.snapshot.value);
+    setState(() {
+      imageUrl = event.snapshot.value.toString();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-          child: Scaffold(
-        body: Container(
-          color: Color(0xff757575),
+    return SafeArea(
+        child: Scaffold(
+      body: GestureDetector(
+        onTap: () {
+          i = i + 1;
+          setState(() {
+            color = Provider.of<CodeProvider>(context, listen: false).colors[i];
+          });
+        },
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            color: color == null ? Color(0xff737373) : color,
+          ),
           child: SingleChildScrollView(
             child: Column(
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.04,
+                  height: 10,
                 ),
                 Center(
                   child: Text(
@@ -36,107 +75,146 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.1,
-                ),
-                Text(
-                  "Put your code here",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.0099,
+                  height: 30,
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.5,
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                  ),
-                  child: TextFormField(),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.05,
-                ),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.35,
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                  ),
-                  child: Container(),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.0099,
-                ),
-                CircleAvatar(
-                  radius: 15,
-                  backgroundColor: Colors.white,
+                  //  padding: EdgeInsets.only(top: 162, left: 145),
+                  width: 154,
+                  height: 21,
                   child: Text(
-                    "24",
-                    style: TextStyle(color: Colors.red),
+                    "Put your code here",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
+                SizedBox(height: 10),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.0099,
+                  width: 199.8,
+                  height: 50,
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.red,
+                    ),
+                    onChanged: (value) async {
+                      await Provider.of<CodeProvider>(context, listen: false)
+                          .checkAndUpdateCode(value);
+
+                      await Provider.of<CodeProvider>(context, listen: false)
+                          .incrementpoint(10);
+                    },
+                  ),
                 ),
+                SizedBox(height: 40),
+                GestureDetector(
+                    onTap: () {
+                      x = x + 1;
+                      setState(() {
+                        imageUrl =
+                            Provider.of<CodeProvider>(context, listen: false)
+                                .assets[x]
+                                .link;
+                      });
+                    },
+                    child: imageUrl == null
+                        ? Image.asset(
+                            "assets/hero.png",
+                            height: 288,
+                            width: 300,
+                          )
+                        : Image.network(
+                            "${imageUrl}",
+                            height: 288,
+                            width: 300,
+                          )),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  // ignore: prefer_const_literals_to_create_immutables
                   children: [
-                    Icon(
-                      Icons.person,
-                      size: 40,
-                      color: Colors.white,
+                    Container(
+                      width: 30,
+                      height: 30,
+                      padding: EdgeInsets.all(0),
+                      margin: EdgeInsets.only(left: 70),
+                      child: CircleAvatar(
+                        radius: 15,
+                        backgroundColor: Colors.white,
+                        child: Text(
+                          Provider.of<CodeProvider>(context, listen: false)
+                              .user[0]
+                              .userPoint
+                              .toString(),
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ),
+                    Image.asset(
+                      "assets/image.png",
+                      width: 57,
+                      height: 93,
                     ),
                     Text(
                       "Your points",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          fontSize: 18),
                     )
                   ],
                 ),
-
+                SizedBox(
+                  height: 30,
+                ),
                 Container(
                     color: Colors.red,
-                    width: 150,
-                    height: 40,
+                    width: 197,
+                    height: 50,
                     child: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => QRGenerator()));
+                        },
                         child: Text(
                           "Export",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
+                          style: TextStyle(color: Colors.white, fontSize: 21),
                         ))),
-
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.0099,
+                  height: 20,
                 ),
-
-                Column(
-                  children: [
-                    Icon(
-                      Icons.qr_code_scanner_rounded,
-                      size: 40,
-                      color: Colors.white,
-                    ),
-                    Text(
-                      "Exchange",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    )
-                  ],
-                ),
-
-                // TextButton(
-                //     onPressed: () async {
-                //       await Provider.of<CodeProvider>(context, listen: false)
-                //           .checkAndUpdateCode("sboij");
-                //       Navigator.push(context,
-                //           MaterialPageRoute(builder: (context) => Testing()));
-                //     },
-                //     child: Icon(Icons.code)),
+                Container(
+                  margin: EdgeInsets.only(right: 300),
+                  child: Column(
+                    children: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => QRScanPage()));
+                          },
+                          child: Image.asset(
+                            "assets/rec.png",
+                            width: 40,
+                            height: 30,
+                          )),
+                      Text("Exchange",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontFamily: "Roboto",
+                              color: Colors.white,
+                              fontSize: 15))
+                    ],
+                  ),
+                )
               ],
             ),
           ),
         ),
-      )),
-    );
+      ),
+    ));
   }
 }

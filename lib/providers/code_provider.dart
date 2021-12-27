@@ -5,7 +5,28 @@ import '../models/code.dart';
 import 'package:http/http.dart' as http;
 
 class CodeProvider with ChangeNotifier {
-  List<Code> codeInfo = [];
+  List<Code> codeInfo = [Code("", 0)];
+  List<User> user = [User(0)];
+
+  incrementpoint(point) {
+    user[0].userPoint++;
+  }
+
+  List<Color> colors = [
+    Color(0xff757575),
+    Color(0xfff1212),
+    Colors.red,
+    Colors.brown
+  ];
+
+  List<ImageLinks> assets = [
+    ImageLinks(
+        "https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171_1280.jpg"),
+    ImageLinks(
+        "https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171_1280.jpg"),
+  ];
+
+  Code? info;
 
   Future checkAndUpdateCode(String code) async {
     var url = Uri.parse("https://yeneproject.herokuapp.com/update");
@@ -26,7 +47,8 @@ class CodeProvider with ChangeNotifier {
       debugPrint(response.body);
 
       var decode = jsonDecode(response.body);
-      codeInfo.add(Code(decode['code'], decode['points']));
+      codeInfo.insert(0, Code(decode['code'], decode['points']));
+      //codeInfo.add(Code(decode['code'], decode['points']));
     } else {
       debugPrint(response.statusCode.toString());
     }

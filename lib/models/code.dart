@@ -5,3 +5,13 @@ class Code {
   num points;
   Code(this.code, this.points);
 }
+
+class ImageLinks {
+  String link;
+  ImageLinks(this.link);
+}
+
+class User {
+  num userPoint;
+  User(this.userPoint);
+}
