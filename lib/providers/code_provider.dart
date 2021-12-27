@@ -13,28 +13,15 @@ class CodeProvider with ChangeNotifier {
     user[0].userPoint += point;
   }
 
-  List<Color> colors = [
-    Color(0xff757575),
-    Color(0xfff1212),
-    Colors.red,
-    Colors.brown
-  ];
-
-  List<ImageLinks> assets = [
-    ImageLinks(
-        "https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171_1280.jpg"),
-    ImageLinks(
-        "https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171_1280.jpg"),
-  ];
-
   Code? info;
 
-  Future checkAndUpdateCode(String code) async {
+  Future checkAndUpdateCode(String code, int point) async {
     var url = Uri.parse("https://yeneproject.herokuapp.com/checkcode");
     var response = await http.post(url, body: {"code": code});
 
     if (response.statusCode == 200) {
-      await getUpdatedFile(code);
+      incrementpoint(point);
+      //await getUpdatedFile(code);
     } else {
       print(response.statusCode);
     }

@@ -29,9 +29,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    getdata();
+
     getinfo();
   }
 
@@ -53,15 +52,6 @@ class _HomePageState extends State<HomePage> {
         ctaLabel = queryDocumentSnapshot.get("ctaLabel");
         incrementingPoint = int.parse(queryDocumentSnapshot.get("point"));
       });
-    });
-  }
-
-  getdata() async {
-    DatabaseEvent event = await referenceData.once();
-    // got this value
-    print(event.snapshot.value);
-    setState(() {
-      // imageUrl = event.snapshot.value.toString();
     });
   }
 
@@ -121,10 +111,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   onChanged: (value) async {
                     await Provider.of<CodeProvider>(context, listen: false)
-                        .checkAndUpdateCode(value);
-
-                    await Provider.of<CodeProvider>(context, listen: false)
-                        .incrementpoint(incrementingPoint);
+                        .checkAndUpdateCode(value, incrementingPoint!);
                   },
                 ),
               ),
