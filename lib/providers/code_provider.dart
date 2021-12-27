@@ -9,7 +9,8 @@ class CodeProvider with ChangeNotifier {
   List<User> user = [User(0)];
 
   incrementpoint(point) {
-    user[0].userPoint++;
+    print(point);
+    user[0].userPoint += point;
   }
 
   List<Color> colors = [
