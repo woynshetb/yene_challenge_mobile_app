@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, unused_import
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +5,6 @@ import 'package:yene_test_mobile/providers/code_provider.dart';
 import 'package:yene_test_mobile/screens/qr_code_scanner.dart';
 import 'package:yene_test_mobile/screens/qr_generator.dart';
 
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget {
@@ -33,12 +30,6 @@ class _HomePageState extends State<HomePage> {
 
     getinfo();
   }
-
-  final referenceData = FirebaseDatabase.instance
-      .ref("app-setting/kxQ1QnyR1ztbJG7fupS0")
-      .child("bgUrl");
-
-  var info = FirebaseFirestore.instance.collection("app-setting");
 
   getinfo() async {
     var info = FirebaseFirestore.instance

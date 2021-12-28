@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import '../models/code.dart';
 import 'package:http/http.dart' as http;
@@ -9,7 +7,6 @@ class CodeProvider with ChangeNotifier {
   List<User> user = [User(0)];
 
   incrementpoint(point) {
-    print(point);
     user[0].userPoint += point;
   }
 
@@ -40,14 +37,14 @@ class CodeProvider with ChangeNotifier {
   //   }
   // }
 
-  Future generateCodeAndTransferCode(int points) async {
-    var url =
-        Uri.parse("https://yeneproject.herokuapp.com/generatecodefromUser");
-    var response = await http.post(url, body: {"points": "$points"});
-    if (response.statusCode == 200) {
-      debugPrint(response.body);
-    } else {
-      debugPrint(response.statusCode.toString());
-    }
-  }
+//   Future generateCodeAndTransferCode(int points) async {
+//     var url =
+//         Uri.parse("https://yeneproject.herokuapp.com/generatecodefromUser");
+//     var response = await http.post(url, body: {"points": "$points"});
+//     if (response.statusCode == 200) {
+//       debugPrint(response.body);
+//     } else {
+//       debugPrint(response.statusCode.toString());
+//     }
+//   }
 }
